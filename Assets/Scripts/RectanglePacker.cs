@@ -88,7 +88,7 @@ public class RectanglePacker {
 	public int packRectangle(bool sort = true) {
 
 		if (sort)
-			mInsertList.Sort ("width", Array.NUMERIC);
+			mInsertList.Sort((emp1, emp2)=>emp1.width.CompareTo(emp2.width));
 
 		while (mInsertList.Count > 0) {
 
