@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -48,21 +49,22 @@ public class Demo : MonoBehaviour {
 		int height;
 		for (int i = 0; i < 10; i++) {
 			
-			width = (int) (20 * SIZE_MULTIPLIER + Mathf.Floor(Random.value * 8) * SIZE_MULTIPLIER * SIZE_MULTIPLIER);
-			height = (int) (20 * SIZE_MULTIPLIER + Mathf.Floor(Random.value * 8) * SIZE_MULTIPLIER * SIZE_MULTIPLIER);
+			width = (int) (20 * SIZE_MULTIPLIER + Mathf.Floor(UnityEngine.Random.value * 8) * SIZE_MULTIPLIER * SIZE_MULTIPLIER);
+			height = (int) (20 * SIZE_MULTIPLIER + Mathf.Floor(UnityEngine.Random.value * 8) * SIZE_MULTIPLIER * SIZE_MULTIPLIER);
 			mRectangles.Add(new Rect(0, 0, width, height));
 		}
 
 		for (int j = 10; j < RECTANGLE_COUNT; j++) {
 
-			width = (int) (3 * SIZE_MULTIPLIER + Mathf.Floor(Random.value * 8) * SIZE_MULTIPLIER);
-			height = (int) (3 * SIZE_MULTIPLIER + Mathf.Floor(Random.value * 8) * SIZE_MULTIPLIER);
+			width = (int) (3 * SIZE_MULTIPLIER + Mathf.Floor(UnityEngine.Random.value * 8) * SIZE_MULTIPLIER);
+			height = (int) (3 * SIZE_MULTIPLIER + Mathf.Floor(UnityEngine.Random.value * 8) * SIZE_MULTIPLIER);
 			mRectangles.Add(new Rect(0, 0, width, height));
 		}
 	}
 
 	private void updateRectangles() {
 
+		DateTime start = DateTime.Now;
 		const int padding = 1;
 
 		if (mPacker == null)
@@ -76,7 +78,11 @@ public class Demo : MonoBehaviour {
 
 		mPacker.packRectangles();
 
+		DateTime end = DateTime.Now;
+
 		if (mPacker.rectangleCount > 0) {
+			
+			Debug.Log(mPacker.rectangleCount + " rectangles packed in " + (end - start).Milliseconds + "ms");
 
             int numRejected = 0;
 
@@ -123,7 +129,7 @@ public class Demo : MonoBehaviour {
 
 			mTexture.Apply();
 
-            if(numRejected > 0)
+            if (numRejected > 0)
                 Debug.LogWarning("Rejected " + numRejected + " rectangles that were either out of bounds or intersecting borders.");
 		}
 	}
