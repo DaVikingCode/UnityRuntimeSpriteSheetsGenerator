@@ -25,11 +25,9 @@ public class Demo : MonoBehaviour {
 		mTexture = new Texture2D(WIDTH, HEIGHT, TextureFormat.ARGB32, false);
 
 		mFillColor = mTexture.GetPixels32();
+
 		for (int i = 0; i < mFillColor.Length; ++i)
 			mFillColor[i] = Color.white;
-
-		mTexture.SetPixels32(mFillColor);
-		mTexture.Apply();
 
 		GameObject tmp = new GameObject("RectanglePackerDemo");
 		SpriteRenderer spriteRenderer = tmp.AddComponent<SpriteRenderer>();
@@ -80,30 +78,53 @@ public class Demo : MonoBehaviour {
 
 		if (mPacker.rectangleCount > 0) {
 
+            int numRejected = 0;
+
 			mTexture.SetPixels32(mFillColor);
 			Rect rect = new Rect();
 			Color32[] tmpColor;
+
 			for (int j = 0; j < mPacker.rectangleCount; j++) {
 
 				rect = mPacker.getRectangle(j, rect);
 
-				tmpColor = new Color32[(int) (rect.width * rect.height)];
-				for (int k = 0; k < tmpColor.Length; ++k)
-					tmpColor[k] = Color.black;
-				
-				mTexture.SetPixels32((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height, tmpColor);
+                int x = Mathf.FloorToInt(rect.x);
+                int y = Mathf.FloorToInt(rect.y);
+                int w = Mathf.FloorToInt(rect.width);
+                int h = Mathf.FloorToInt(rect.height);
+                int size = w*h;
 
-				int index = mPacker.getRectangleId(j);
+                if (x < 0 || y < 0 || x+w > mTexture.width || y+h > mTexture.height)
+                {
+                    numRejected++;
+                    continue;
+                }
+
+				tmpColor = new Color32[size];
+                for (int k = 0; k < size; ++k)
+                    tmpColor[k] = Color.black;
+
+				mTexture.SetPixels32(x, y, w, h, tmpColor);
+
+               
+
+                int index = mPacker.getRectangleId(j);
 				Color color = convertHexToRGBA((uint) (0xFF171703 + (((18 * ((index + 4) % 13)) << 16) + ((31 * ((index * 3) % 8)) << 8) + 63 * (((index + 1) * 3) % 5))));
 
-				tmpColor = new Color32[(int) ((rect.width - 2) * (rect.height - 2))];
-				for (int k = 0; k < tmpColor.Length; ++k)
+                size -= 4;
+
+				tmpColor = new Color32[size];
+				for (int k = 0; k < size; ++k)
 					tmpColor[k] = color;
 
-				mTexture.SetPixels32((int) (rect.x + 1), (int) (rect.y + 1), (int) (rect.width - 2), (int) (rect.height - 2), tmpColor);
-			}
+				mTexture.SetPixels32(x + 1, y + 1, w - 2, h - 2, tmpColor);
+
+            }
 
 			mTexture.Apply();
+
+            if(numRejected > 0)
+                Debug.LogWarning("Rejected " + numRejected + " rectangles that were either out of bounds or intersecting borders.");
 		}
 	}
 
