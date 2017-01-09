@@ -50,7 +50,7 @@ public class RectanglePacker {
 		mPackedWidth = 0;
 		mPackedHeight = 0;
 
-		mFreeAreas[0] = allocateRectangle(0, 0, mWidth, mHeight);
+		mFreeAreas.Add(allocateRectangle(0, 0, mWidth, mHeight));
 
 		while (mInsertList.Count > 0)
 			freeSize(mInsertList.Pop());
@@ -104,9 +104,9 @@ public class RectanglePacker {
 				generateNewFreeAreas(target, mFreeAreas, mNewFreeAreas);
 
 				while (mNewFreeAreas.Count > 0)
-					mFreeAreas[mFreeAreas.Count] = mNewFreeAreas.Pop();
+					mFreeAreas.Add(mNewFreeAreas.Pop());
 
-				mInsertedRectangles[mInsertedRectangles.Count] = target;
+				mInsertedRectangles.Add(target);
 
 				if (target.right > mPackedWidth)
 					mPackedWidth = target.right;
@@ -123,7 +123,7 @@ public class RectanglePacker {
 
 	private void filterSelfSubAreas(List<IntegerRectangle> areas) {
 
-		for (int i = areas.Count; i >= 0; i--) {
+		for (int i = areas.Count - 1; i >= 0; i--) {
 
 			IntegerRectangle filtered = areas[i];
 			for (int j = areas.Count - 1; j >= 0; j--) {
@@ -190,32 +190,32 @@ public class RectanglePacker {
 
 		int rightDelta = area.right - divider.right;
 		if (rightDelta > 0) {
-			results[results.Count] = allocateRectangle(divider.right, area.y, rightDelta, area.height);
+			results.Add(allocateRectangle(divider.right, area.y, rightDelta, area.height));
 			count++;
 		}
 
 		int leftDelta = divider.x - area.x;
 		if (leftDelta > 0) {
-			results[results.Count] = allocateRectangle(area.x, area.y, leftDelta, area.height);
+			results.Add(allocateRectangle(area.x, area.y, leftDelta, area.height));
 			count++;
 		}
 
 		int bottomDelta = area.bottom - divider.bottom;
 		if (bottomDelta > 0) {
-			results[results.Count] = allocateRectangle(area.x, divider.bottom, area.width, bottomDelta);
+			results.Add(allocateRectangle(area.x, divider.bottom, area.width, bottomDelta));
 			count++;
 		}
 
 		int topDelta = divider.y - area.y;
 		if (topDelta > 0) {
-			results[results.Count] = allocateRectangle(area.x, divider.bottom, area.width, topDelta);
+			results.Add(allocateRectangle(area.x, divider.bottom, area.width, topDelta));
 			count++;
 		}
 
 		if (count == 0 && (divider.width < area.width || divider.height < area.height)) {
 
 			// Only touching the area, store the area itself
-			results[results.Count] = area;
+			results.Add(area);
 
 		} else
 			freeRectangle(area);
@@ -282,7 +282,7 @@ public class RectanglePacker {
 
 	private void freeRectangle(IntegerRectangle rectangle) {
 
-		mRectangleStack[mRectangleStack.Count] = rectangle;
+		mRectangleStack.Add(rectangle);
 	}
 
 	private SortableSize allocateSize(int width, int height, int id) {
@@ -302,7 +302,7 @@ public class RectanglePacker {
 
 	private void freeSize(SortableSize size) {
 		
-		mSortableSizeStack[mSortableSizeStack.Count] = size;
+		mSortableSizeStack.Add(size);
 	}
 }
 
