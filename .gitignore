@@ -27,4 +27,5 @@ sysinfo.txt
 
 # Builds
 *.apk
-*.unitypackage
+Assets/ConsolePro
+ConsolePro.meta

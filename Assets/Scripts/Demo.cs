@@ -89,15 +89,18 @@ public class Demo : MonoBehaviour {
 
 				tmpColor = new Color32[(int) (rect.width * rect.height)];
 				for (int k = 0; k < tmpColor.Length; ++k)
-					tmpColor [k] = Color.black;
-
+					tmpColor[k] = Color.black;
+				
 				mTexture.SetPixels32((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height, tmpColor);
+
 				int index = mPacker.getRectangleId(j);
 				Color color = convertHexToRGBA((uint) (0xFF171703 + (((18 * ((index + 4) % 13)) << 16) + ((31 * ((index * 3) % 8)) << 8) + 63 * (((index + 1) * 3) % 5))));
 
 				tmpColor = new Color32[(int) ((rect.width - 2) * (rect.height - 2))];
 				for (int k = 0; k < tmpColor.Length; ++k)
 					tmpColor[k] = color;
+
+				mTexture.SetPixels32((int) (rect.x + 1), (int) (rect.y + 1), (int) (rect.width - 2), (int) (rect.height - 2), tmpColor);
 			}
 
 			mTexture.Apply();
