@@ -61,16 +61,13 @@ public class RectanglePacker {
 	public Rect getRectangle(int index, Rect rectangle) {
 		
 		IntegerRectangle inserted = mInsertedRectangles[index];
-		if (rectangle != null) {
 
-			rectangle.x = inserted.x;
-			rectangle.y = inserted.y;
-			rectangle.width = inserted.width;
-			rectangle.height = inserted.height;
-			return rectangle;
-		}
+		rectangle.x = inserted.x;
+		rectangle.y = inserted.y;
+		rectangle.width = inserted.width;
+		rectangle.height = inserted.height;
 
-		return new Rect(inserted.x, inserted.y, inserted.width, inserted.height);
+		return rectangle;
 	}
 
 	public int getRectangleId(int index) {
@@ -85,7 +82,7 @@ public class RectanglePacker {
 		mInsertList.Add(sortableSize);
 	}
 
-	public int packRectangle(bool sort = true) {
+	public int packRectangles(bool sort = true) {
 
 		if (sort)
 			mInsertList.Sort((emp1, emp2)=>emp1.width.CompareTo(emp2.width));
