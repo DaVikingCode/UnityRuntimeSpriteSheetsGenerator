@@ -69,7 +69,6 @@ public class Demo : MonoBehaviour {
 
 		if (mPacker == null)
 			mPacker = new RectanglePacker(WIDTH, HEIGHT, padding);
-
 		else
 			mPacker.reset(WIDTH, HEIGHT, padding);
 
@@ -87,20 +86,16 @@ public class Demo : MonoBehaviour {
             int numRejected = 0;
 
 			mTexture.SetPixels32(mFillColor);
-			Rect rect = new Rect();
+			IntegerRectangle rect = new IntegerRectangle();
 			Color32[] tmpColor;
 
 			for (int j = 0; j < mPacker.rectangleCount; j++) {
 
 				rect = mPacker.getRectangle(j, rect);
 
-                int x = Mathf.FloorToInt(rect.x);
-                int y = Mathf.FloorToInt(rect.y);
-                int w = Mathf.FloorToInt(rect.width);
-                int h = Mathf.FloorToInt(rect.height);
-                int size = w*h;
+                int size = rect.width*rect.height;
 
-                if (x < 0 || y < 0 || x+w > mTexture.width || y+h > mTexture.height)
+                if (rect.x < 0 || rect.y < 0 || rect.x+rect.width > mTexture.width || rect.y+rect.height > mTexture.height)
                 {
                     numRejected++;
                     continue;
@@ -110,9 +105,7 @@ public class Demo : MonoBehaviour {
                 for (int k = 0; k < size; ++k)
                     tmpColor[k] = Color.black;
 
-				mTexture.SetPixels32(x, y, w, h, tmpColor);
-
-               
+				mTexture.SetPixels32(rect.x, rect.y, rect.width, rect.height, tmpColor);
 
                 int index = mPacker.getRectangleId(j);
 				Color color = convertHexToRGBA((uint) (0xFF171703 + (((18 * ((index + 4) % 13)) << 16) + ((31 * ((index * 3) % 8)) << 8) + 63 * (((index + 1) * 3) % 5))));
@@ -123,7 +116,7 @@ public class Demo : MonoBehaviour {
 				for (int k = 0; k < size; ++k)
 					tmpColor[k] = color;
 
-				mTexture.SetPixels32(x + 1, y + 1, w - 2, h - 2, tmpColor);
+				mTexture.SetPixels32(rect.x + 1, rect.y + 1, rect.width - 2, rect.height - 2, tmpColor);
 
             }
 

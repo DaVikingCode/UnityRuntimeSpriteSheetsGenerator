@@ -58,7 +58,7 @@ public class RectanglePacker {
 		mPadding = padding;
 	}
 
-	public Rect getRectangle(int index, Rect rectangle) {
+	public IntegerRectangle getRectangle(int index, IntegerRectangle rectangle) {
 		
 		IntegerRectangle inserted = mInsertedRectangles[index];
 
