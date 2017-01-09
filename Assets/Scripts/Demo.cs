@@ -12,6 +12,9 @@ public class Demo : MonoBehaviour {
 	private const int RECTANGLE_COUNT = 500;
 	private const float SIZE_MULTIPLIER = 2;
 
+	private Texture2D mTexture;
+	private Color32[] mFillColor;
+
 	private RectanglePacker mPacker;
 
 	private List<Rect> mRectangles = new List<Rect>();
@@ -19,19 +22,22 @@ public class Demo : MonoBehaviour {
 
 	void Start () {
 
-		Texture2D texture = new Texture2D(WIDTH, HEIGHT, TextureFormat.ARGB32, false);
+		mTexture = new Texture2D(WIDTH, HEIGHT, TextureFormat.ARGB32, false);
 
-		Color[] fillColor = texture.GetPixels();
-		for (int i = 0; i < fillColor.Length; ++i)
-			fillColor[i] = Color.red;
+		mFillColor = mTexture.GetPixels32();
+		for (int i = 0; i < mFillColor.Length; ++i)
+			mFillColor[i] = Color.white;
 
-		texture.SetPixels(fillColor);
+		mTexture.SetPixels32(mFillColor);
+		mTexture.Apply();
 
-		texture.Apply();
-
-		GameObject tmp = new GameObject();
+		GameObject tmp = new GameObject("RectanglePackerDemo");
 		SpriteRenderer spriteRenderer = tmp.AddComponent<SpriteRenderer>();
-		spriteRenderer.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+		spriteRenderer.sprite = Sprite.Create(mTexture, new Rect(0, 0, mTexture.width, mTexture.height), Vector2.zero);
+
+		createRectangles();
+
+		updateRectangles();
 	}
 
 	void Update() {
@@ -74,15 +80,38 @@ public class Demo : MonoBehaviour {
 
 		if (mPacker.rectangleCount > 0) {
 
-			//mBitmapData.fillRect(mBitmapData.rect, 0xFFFFFFFF);
-
-			/*Rect rect = new Rect();
-			for (int j = 0; j < mPacker.rectangleCount; ++j) {
+			mTexture.SetPixels32(mFillColor);
+			Rect rect = new Rect();
+			Color32[] tmpColor;
+			for (int j = 0; j < mPacker.rectangleCount; j++) {
 
 				rect = mPacker.getRectangle(j, rect);
 
-			}*/
+				tmpColor = new Color32[(int) (rect.width * rect.height)];
+				for (int k = 0; k < tmpColor.Length; ++k)
+					tmpColor [k] = Color.black;
+
+				mTexture.SetPixels32((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height, tmpColor);
+				int index = mPacker.getRectangleId(j);
+				Color color = convertHexToRGBA((uint) (0xFF171703 + (((18 * ((index + 4) % 13)) << 16) + ((31 * ((index * 3) % 8)) << 8) + 63 * (((index + 1) * 3) % 5))));
+
+				tmpColor = new Color32[(int) ((rect.width - 2) * (rect.height - 2))];
+				for (int k = 0; k < tmpColor.Length; ++k)
+					tmpColor[k] = color;
+			}
+
+			mTexture.Apply();
 		}
+	}
+
+	private Color32 convertHexToRGBA(uint color) {
+
+		Color32 c;
+		c.b = (byte)((color) & 0xFF);
+		c.g = (byte)((color>>8) & 0xFF);
+		c.r = (byte)((color>>16) & 0xFF);
+		c.a = (byte)((color>>24) & 0xFF);
+		return c;
 	}
 
 }
