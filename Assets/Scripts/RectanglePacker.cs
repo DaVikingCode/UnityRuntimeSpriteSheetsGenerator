@@ -208,7 +208,7 @@ public class RectanglePacker {
 
 		int topDelta = divider.y - area.y;
 		if (topDelta > 0) {
-			results.Add(allocateRectangle(area.x, divider.bottom, area.width, topDelta));
+			results.Add(allocateRectangle(area.x, area.y, area.width, topDelta));
 			count++;
 		}
 
