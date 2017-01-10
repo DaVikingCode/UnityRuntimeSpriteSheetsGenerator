@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections;
+﻿using DaVikingCode.RectanglePacking;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Demo : MonoBehaviour {
+public class RectanglePacking : MonoBehaviour {
 
 	private const int RECTANGLE_COUNT = 500;
 	private const float SIZE_MULTIPLIER = 2;
