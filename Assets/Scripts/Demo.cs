@@ -28,7 +28,7 @@ public class Demo : MonoBehaviour {
 		mFillColor = mTexture.GetPixels32();
 
 		for (int i = 0; i < mFillColor.Length; ++i)
-			mFillColor[i] = Color.white;
+			mFillColor[i] = Color.clear;
 
 		img.sprite = Sprite.Create(mTexture, new Rect(0, 0, mTexture.width, mTexture.height), Vector2.zero);
 
@@ -85,8 +85,6 @@ public class Demo : MonoBehaviour {
 			
 			packingTimeText.text = mPacker.rectangleCount + " rectangles packed in " + (end - start).Milliseconds + "ms";
 
-            int numRejected = 0;
-
 			mTexture.SetPixels32(mFillColor);
 			IntegerRectangle rect = new IntegerRectangle();
 			Color32[] tmpColor;
@@ -96,13 +94,7 @@ public class Demo : MonoBehaviour {
 				rect = mPacker.getRectangle(j, rect);
 
                 int size = rect.width*rect.height;
-
-                if (rect.x < 0 || rect.y < 0 || rect.x+rect.width > mTexture.width || rect.y+rect.height > mTexture.height)
-                {
-                    numRejected++;
-                    continue;
-                }
-
+				
 				tmpColor = new Color32[size];
                 for (int k = 0; k < size; ++k)
                     tmpColor[k] = Color.black;
@@ -123,9 +115,6 @@ public class Demo : MonoBehaviour {
             }
 
 			mTexture.Apply();
-
-            if (numRejected > 0)
-                Debug.LogWarning("Rejected " + numRejected + " rectangles that were either out of bounds or intersecting borders.");
 		}
 	}
 
