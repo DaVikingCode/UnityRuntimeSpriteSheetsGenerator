@@ -93,7 +93,7 @@ public class RectanglePacking : MonoBehaviour {
 
 				rect = mPacker.getRectangle(j, rect);
 
-                int size = rect.width*rect.height;
+                int size = rect.width * rect.height;
 				
 				tmpColor = new Color32[size];
                 for (int k = 0; k < size; ++k)
