@@ -2,13 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Demo : MonoBehaviour {
-
-	private const int WIDTH = 480;
-	private const int HEIGHT = 480;
-	private const int Y_MARGIN = 40;
-	private const int BOX_MARGIN = 15;
 
 	private const int RECTANGLE_COUNT = 500;
 	private const float SIZE_MULTIPLIER = 2;
@@ -20,27 +16,33 @@ public class Demo : MonoBehaviour {
 
 	private List<Rect> mRectangles = new List<Rect>();
 
+	public Image img;
+	public Slider sliderWidth;
+	public Slider sliderHeight;
+	public Text packingTimeText;
 
 	void Start () {
 
-		mTexture = new Texture2D(WIDTH, HEIGHT, TextureFormat.ARGB32, false);
+		mTexture = new Texture2D((int) sliderWidth.value, (int) sliderHeight.value, TextureFormat.ARGB32, false);
 
 		mFillColor = mTexture.GetPixels32();
 
 		for (int i = 0; i < mFillColor.Length; ++i)
 			mFillColor[i] = Color.white;
 
-		GameObject tmp = new GameObject("RectanglePackerDemo");
-		SpriteRenderer spriteRenderer = tmp.AddComponent<SpriteRenderer>();
-		spriteRenderer.sprite = Sprite.Create(mTexture, new Rect(0, 0, mTexture.width, mTexture.height), Vector2.zero);
+		img.sprite = Sprite.Create(mTexture, new Rect(0, 0, mTexture.width, mTexture.height), Vector2.zero);
 
 		createRectangles();
 
 		updateRectangles();
+
+		sliderWidth.onValueChanged.AddListener(updatePackingBox);
+		sliderHeight.onValueChanged.AddListener(updatePackingBox);
 	}
 
-	void Update() {
+	void updatePackingBox(float value) {
 
+		updateRectangles();
 	}
 
 	private void createRectangles() {
@@ -68,9 +70,9 @@ public class Demo : MonoBehaviour {
 		const int padding = 1;
 
 		if (mPacker == null)
-			mPacker = new RectanglePacker(WIDTH, HEIGHT, padding);
+			mPacker = new RectanglePacker((int) sliderWidth.value, (int)sliderHeight.value, padding);
 		else
-			mPacker.reset(WIDTH, HEIGHT, padding);
+			mPacker.reset((int) sliderWidth.value, (int) sliderHeight.value, padding);
 
 		for (int i = 0; i < RECTANGLE_COUNT; i++)
 			mPacker.insertRectangle((int) mRectangles[i].width, (int) mRectangles[i].height, i);
@@ -81,7 +83,7 @@ public class Demo : MonoBehaviour {
 
 		if (mPacker.rectangleCount > 0) {
 			
-			Debug.Log(mPacker.rectangleCount + " rectangles packed in " + (end - start).Milliseconds + "ms");
+			packingTimeText.text = mPacker.rectangleCount + " rectangles packed in " + (end - start).Milliseconds + "ms";
 
             int numRejected = 0;
 
