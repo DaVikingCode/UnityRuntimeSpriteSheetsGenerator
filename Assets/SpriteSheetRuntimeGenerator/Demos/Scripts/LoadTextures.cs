@@ -75,20 +75,14 @@ public class LoadTextures : MonoBehaviour {
 
 			mTexture.SetPixels32(mFillColor);
 			IntegerRectangle rect = new IntegerRectangle();
-			Color32[] tmpColor;
 
 			for (int j = 0; j < mPacker.rectangleCount; j++) {
 
 				rect = mPacker.getRectangle(j, rect);
 
-				int size = rect.width * rect.height;
-
-				size -= 4;
-
 				int index = mPacker.getRectangleId(j);
 
-				mTexture.SetPixels32(rect.x + 1, rect.y + 1, rect.width - 2, rect.height - 2, textures[index].GetPixels32());
-
+				mTexture.SetPixels32(rect.x, rect.y, rect.width, rect.height, textures[index].GetPixels32());
 			}
 
 			mTexture.Apply();
