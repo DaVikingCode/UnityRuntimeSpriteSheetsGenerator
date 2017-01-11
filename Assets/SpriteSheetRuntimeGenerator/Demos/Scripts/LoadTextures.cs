@@ -76,6 +76,8 @@ public class LoadTextures : MonoBehaviour {
 			mTexture.SetPixels32(mFillColor);
 			IntegerRectangle rect = new IntegerRectangle();
 
+			List<TextureAsset> textureAssets = new List<TextureAsset>();
+
 			for (int j = 0; j < mPacker.rectangleCount; j++) {
 
 				rect = mPacker.getRectangle(j, rect);
@@ -83,9 +85,26 @@ public class LoadTextures : MonoBehaviour {
 				int index = mPacker.getRectangleId(j);
 
 				mTexture.SetPixels32(rect.x, rect.y, rect.width, rect.height, textures[index].GetPixels32());
+
+				TextureAsset texture = new TextureAsset ();
+				texture.x = rect.x;
+				texture.y = rect.y;
+				texture.width = rect.width;
+				texture.height = rect.height;
+				texture.id = index;
+
+				textureAssets.Add(texture);
 			}
 
 			mTexture.Apply();
+
+			Directory.CreateDirectory(Application.persistentDataPath + "/Test/");
+
+			byte[] bytes = mTexture.EncodeToPNG();
+			File.WriteAllBytes(Application.persistentDataPath + "/Test/data.png", bytes);
+
+			TextureAssets assets = new TextureAssets(textureAssets.ToArray());
+			File.WriteAllText(Application.persistentDataPath + "/Test/data.json", JsonUtility.ToJson(assets));
 		}
 	}
 
