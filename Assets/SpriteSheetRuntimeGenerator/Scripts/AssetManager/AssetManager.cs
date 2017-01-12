@@ -129,19 +129,17 @@ public class AssetManager : MonoBehaviour {
 
 	public Sprite[] GetSprites(string prefix) {
 
-		List<string> spriteListNames = new List<string>();
+		List<string> spriteNames = new List<string>();
 		foreach (var asset in mSprites)
-			spriteListNames.Add(asset.Key);
+			spriteNames.Add(asset.Key);
 
-		string[] spriteArrayNames = spriteListNames.ToArray();
-
-		Array.Sort(spriteArrayNames, StringComparer.Ordinal);
+		spriteNames.Sort(StringComparer.Ordinal);
 
 		List<Sprite> sprites = new List<Sprite>();
 		Sprite sprite;
-		for (int i = 0; i < spriteArrayNames.Length; ++i) {
+		for (int i = 0; i < spriteNames.Count; ++i) {
 
-			mSprites.TryGetValue(spriteArrayNames[i], out sprite);
+			mSprites.TryGetValue(spriteNames[i], out sprite);
 
 			sprites.Add(sprite);
 		}
