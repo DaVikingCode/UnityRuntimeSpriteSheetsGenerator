@@ -31,7 +31,7 @@ public class LoadTextures : MonoBehaviour {
 
 	IEnumerator LoadAnimation() {
 
-		Sprite[] sprites = assetManager.GetSprites ("walking");
+		Sprite[] sprites = assetManager.GetSprites("walking");
 
 		int j = 0;
 		while (j < sprites.Length) {

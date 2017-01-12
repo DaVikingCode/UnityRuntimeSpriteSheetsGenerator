@@ -69,6 +69,7 @@ public class AssetManager : MonoBehaviour {
 		while (mRectangles.Count > 0) {
 
 			mPacker = new RectanglePacker(mTexture.width, mTexture.height, padding);
+
 			for (int i = 0; i < mRectangles.Count; i++)
 				mPacker.insertRectangle((int) mRectangles[i].width, (int) mRectangles[i].height, i);
 
@@ -80,7 +81,9 @@ public class AssetManager : MonoBehaviour {
 				IntegerRectangle rect = new IntegerRectangle();
 				List<TextureAsset> textureAssets = new List<TextureAsset>();
 
-				List<Rect> rectGarbages = new List<Rect>();
+				List<Rect> garbageRect = new List<Rect>();
+				List<Texture2D> garabeTextures = new List<Texture2D>();
+				List<string> garbageImages = new List<string>();
 
 				for (int j = 0; j < mPacker.rectangleCount; j++) {
 
@@ -99,17 +102,19 @@ public class AssetManager : MonoBehaviour {
 
 					textureAssets.Add(texture);
 
-					rectGarbages.Add(mRectangles[index]);
+					garbageRect.Add(mRectangles[index]);
+					garabeTextures.Add(textures[index]);
+					garbageImages.Add(images[index]);
 				}
 
-				foreach (Rect rectGarbage in rectGarbages) {
+				foreach (Rect garbage in garbageRect)
+					mRectangles.Remove(garbage);
 
-					int indexToDestroy = mRectangles.IndexOf(rectGarbage);
+				foreach (Texture2D garbage in garabeTextures)
+					textures.Remove(garbage);
 
-					mRectangles.RemoveAt(indexToDestroy);
-					textures.RemoveAt(indexToDestroy);
-					images.RemoveAt(indexToDestroy);
-				}
+				foreach (string garbage in garbageImages)
+					images.Remove(garbage);
 
 				mTexture.Apply();
 
@@ -129,7 +134,6 @@ public class AssetManager : MonoBehaviour {
 
 				foreach (TextureAsset textureAsset in textureAssets)
 					mSprites.Add(textureAsset.name, Sprite.Create(mTexture, new Rect(textureAsset.x, textureAsset.y, textureAsset.width, textureAsset.height), Vector2.zero));
-
 			}
 
 		}
