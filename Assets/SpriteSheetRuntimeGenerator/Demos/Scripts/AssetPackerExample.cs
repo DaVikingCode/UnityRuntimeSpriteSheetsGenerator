@@ -4,11 +4,11 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LoadTextures : MonoBehaviour {
+public class AssetPackerExample : MonoBehaviour {
 	
 	public Image anim;
 
-	AssetManager assetManager;
+	AssetPacker assetPacker;
 	
 	void Start () {
 
@@ -16,12 +16,12 @@ public class LoadTextures : MonoBehaviour {
 
 		string[] files = Directory.GetFiles(Application.persistentDataPath + "/Textures", "*.png");
 
-		assetManager = GetComponent<AssetManager>();
+		assetPacker = GetComponent<AssetPacker>();
 
-		assetManager.OnProcessCompleted.AddListener(LaunchAnimations);
+		assetPacker.OnProcessCompleted.AddListener(LaunchAnimations);
 
-		assetManager.AddItemsToRaster(files);
-		assetManager.Process();
+		assetPacker.AddItemsToRaster(files);
+		assetPacker.Process();
 	}
 
 	void LaunchAnimations() {
@@ -31,7 +31,7 @@ public class LoadTextures : MonoBehaviour {
 
 	IEnumerator LoadAnimation() {
 
-		Sprite[] sprites = assetManager.GetSprites("walking");
+		Sprite[] sprites = assetPacker.GetSprites("walking");
 
 		int j = 0;
 		while (j < sprites.Length) {
@@ -39,6 +39,9 @@ public class LoadTextures : MonoBehaviour {
 			anim.sprite = sprites[j++];
 
 			yield return new WaitForSeconds(0.1f);
+
+			if (j == sprites.Length)
+				j = 0;
 		}
 	}
 

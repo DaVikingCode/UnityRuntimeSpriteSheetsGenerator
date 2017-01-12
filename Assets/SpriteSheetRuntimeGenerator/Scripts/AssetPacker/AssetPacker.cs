@@ -6,7 +6,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class AssetManager : MonoBehaviour {
+public class AssetPacker : MonoBehaviour {
 
 	public UnityEvent OnProcessCompleted;
 
@@ -59,14 +59,13 @@ public class AssetManager : MonoBehaviour {
 
 		int textureSize = allow4096Textures ? 4096 : 2048;
 
-		mTexture = new Texture2D(textureSize, textureSize, TextureFormat.ARGB32, false);
-
-		Color32[] mFillColor = mTexture.GetPixels32();
-		for (int i = 0; i < mFillColor.Length; ++i)
-			mFillColor[i] = Color.clear;
-
 		int numSpriteSheet = 0;
 		while (mRectangles.Count > 0) {
+
+			mTexture = new Texture2D(textureSize, textureSize, TextureFormat.ARGB32, false);
+			Color32[] mFillColor = mTexture.GetPixels32();
+			for (int i = 0; i < mFillColor.Length; ++i)
+				mFillColor[i] = Color.clear;
 
 			mPacker = new RectanglePacker(mTexture.width, mTexture.height, padding);
 
@@ -133,7 +132,7 @@ public class AssetManager : MonoBehaviour {
 				TextureAssets textureAssets = JsonUtility.FromJson<TextureAssets>(loaderJSON.text);*/
 
 				foreach (TextureAsset textureAsset in textureAssets)
-					mSprites.Add(textureAsset.name, Sprite.Create(mTexture, new Rect(textureAsset.x, textureAsset.y, textureAsset.width, textureAsset.height), Vector2.zero));
+					mSprites.Add(textureAsset.name, Sprite.Create(mTexture, new Rect(textureAsset.x, textureAsset.y, textureAsset.width, textureAsset.height), Vector2.zero, 100, 0, SpriteMeshType.FullRect));
 			}
 
 		}

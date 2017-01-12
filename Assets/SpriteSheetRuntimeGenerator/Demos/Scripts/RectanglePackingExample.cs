@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RectanglePacking : MonoBehaviour {
+public class RectanglePackingExample : MonoBehaviour {
 
 	private const int RECTANGLE_COUNT = 500;
 	private const float SIZE_MULTIPLIER = 2;

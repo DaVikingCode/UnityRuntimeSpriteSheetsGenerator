@@ -430,6 +430,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   anim: {fileID: 506600173}
+  anims: {fileID: 0}
 --- !u!4 &2090206894
 Transform:
   m_ObjectHideFlags: 0
@@ -454,3 +455,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74f2e23464b984a9eaaed29b14be63f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnProcessCompleted:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: 556e697479456e67696e652e4576656e74732e556e6974794576656e742c20556e697479456e67696e652c2056657273696f6e3d302e302e302e302c2043756c747572653d6e65757472616c2c205075626c69634b6579546f6b656e3d6e756c6c
+    m_CallsDirty: 1
+  mTexture: {fileID: 0}
+  allow4096Textures: 0
