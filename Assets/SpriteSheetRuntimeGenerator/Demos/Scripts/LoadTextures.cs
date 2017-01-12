@@ -7,6 +7,8 @@ using UnityEngine.UI;
 public class LoadTextures : MonoBehaviour {
 	
 	public Image anim;
+
+	AssetManager assetManager;
 	
 	void Start () {
 
@@ -14,7 +16,7 @@ public class LoadTextures : MonoBehaviour {
 
 		string[] files = Directory.GetFiles(Application.persistentDataPath + "/Textures", "*.png");
 
-		AssetManager assetManager = GetComponent<AssetManager>();
+		assetManager = GetComponent<AssetManager>();
 
 		assetManager.OnProcessCompleted.AddListener(LaunchAnimations);
 
@@ -29,22 +31,15 @@ public class LoadTextures : MonoBehaviour {
 
 	IEnumerator LoadAnimation() {
 
-		WWW loaderTexture = new WWW("file:///" + Application.persistentDataPath + "/Test/data.png");
-		yield return loaderTexture;
+		Sprite[] sprites = assetManager.GetSprites ("walking");
 
-		WWW loaderJSON = new WWW("file:///" + Application.persistentDataPath + "/Test/data.json");
-		yield return loaderJSON;
+		int j = 0;
+		while (j < sprites.Length) {
 
-		TextureAssets textureAssets = JsonUtility.FromJson<TextureAssets>(loaderJSON.text);
+			anim.sprite = sprites[j++];
 
-		Dictionary<string, TextureAsset> assets = new Dictionary<string, TextureAsset>();
-		foreach (TextureAsset textureAsset in textureAssets.assets)
-			assets.Add(textureAsset.name, textureAsset);
-
-		TextureAsset asset = null;
-		assets.TryGetValue("walking0004", out asset);
-
-		anim.sprite = Sprite.Create(loaderTexture.texture, new Rect(asset.x, asset.y, asset.width, asset.height), Vector2.zero);
+			yield return new WaitForSeconds(0.1f);
+		}
 	}
 
 	void CopyPasteFoldersAndPNG(string SourcePath, string DestinationPath) {

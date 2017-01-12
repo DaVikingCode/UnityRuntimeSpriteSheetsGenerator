@@ -1,4 +1,5 @@
 ﻿using DaVikingCode.RectanglePacking;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -9,10 +10,8 @@ public class AssetManager : MonoBehaviour {
 
 	public UnityEvent OnProcessCompleted;
 
+	protected Dictionary<string, Sprite> mSprites = new Dictionary<string, Sprite>();
 	protected List<ItemToRaster> itemsToRaster = new List<ItemToRaster>();
-
-	protected List<Texture2D> textures = new List<Texture2D>();
-	protected List<string> images = new List<string>();
 
 	protected RectanglePacker mPacker;
 	protected Texture2D mTexture;
@@ -38,6 +37,10 @@ public class AssetManager : MonoBehaviour {
 	}
 
 	protected IEnumerator process() {
+
+		List<Texture2D> textures = new List<Texture2D>();
+		List<string> images = new List<string>();
+		List<TextureAsset> textureAssets = new List<TextureAsset>();
 
 		foreach (ItemToRaster itemToRaster in itemsToRaster) {
 
@@ -73,8 +76,7 @@ public class AssetManager : MonoBehaviour {
 
 			mTexture.SetPixels32(mFillColor);
 			IntegerRectangle rect = new IntegerRectangle();
-
-			List<TextureAsset> textureAssets = new List<TextureAsset>();
+			textureAssets = new List<TextureAsset>();
 
 			for (int j = 0; j < mPacker.rectangleCount; j++) {
 
@@ -98,14 +100,52 @@ public class AssetManager : MonoBehaviour {
 
 			Directory.CreateDirectory(Application.persistentDataPath + "/Test/");
 
-			byte[] bytes = mTexture.EncodeToPNG();
-			File.WriteAllBytes(Application.persistentDataPath + "/Test/data.png", bytes);
+			File.WriteAllBytes(Application.persistentDataPath + "/Test/data.png", mTexture.EncodeToPNG());
+			File.WriteAllText(Application.persistentDataPath + "/Test/data.json", JsonUtility.ToJson(new TextureAssets(textureAssets.ToArray())));
 
-			TextureAssets assets = new TextureAssets(textureAssets.ToArray());
-			File.WriteAllText(Application.persistentDataPath + "/Test/data.json", JsonUtility.ToJson(assets));
+			/*WWW loaderTexture = new WWW("file:///" + Application.persistentDataPath + "/Test/data.png");
+			yield return loaderTexture;
+
+			WWW loaderJSON = new WWW("file:///" + Application.persistentDataPath + "/Test/data.json");
+			yield return loaderJSON;
+
+			TextureAssets textureAssets = JsonUtility.FromJson<TextureAssets>(loaderJSON.text);*/
+
+			foreach (TextureAsset textureAsset in textureAssets)
+				mSprites.Add(textureAsset.name, Sprite.Create(mTexture, new Rect(textureAsset.x, textureAsset.y, textureAsset.width, textureAsset.height), Vector2.zero));
 
 			OnProcessCompleted.Invoke();
 		}
+	}
 
+	public Sprite GetSprite(string id) {
+
+		Sprite sprite = null;
+
+		mSprites.TryGetValue (id, out sprite);
+
+		return sprite;
+	}
+
+	public Sprite[] GetSprites(string prefix) {
+
+		List<string> spriteListNames = new List<string>();
+		foreach (var asset in mSprites)
+			spriteListNames.Add(asset.Key);
+
+		string[] spriteArrayNames = spriteListNames.ToArray();
+
+		Array.Sort(spriteArrayNames, StringComparer.Ordinal);
+
+		List<Sprite> sprites = new List<Sprite>();
+		Sprite sprite;
+		for (int i = 0; i < spriteArrayNames.Length; ++i) {
+
+			mSprites.TryGetValue(spriteArrayNames[i], out sprite);
+
+			sprites.Add(sprite);
+		}
+
+		return sprites.ToArray();
 	}
 }
