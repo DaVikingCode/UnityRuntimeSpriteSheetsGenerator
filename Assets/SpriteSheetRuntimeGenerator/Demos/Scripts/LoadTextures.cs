@@ -24,7 +24,7 @@ public class LoadTextures : MonoBehaviour {
 
 	void LaunchAnimations() {
 
-		StartCoroutine(LoadAnimation ());
+		StartCoroutine(LoadAnimation());
 	}
 
 	IEnumerator LoadAnimation() {
@@ -44,14 +44,7 @@ public class LoadTextures : MonoBehaviour {
 		TextureAsset asset = null;
 		assets.TryGetValue("walking0004", out asset);
 
-		Color[] colors = loaderTexture.texture.GetPixels(asset.x, asset.y, asset.width, asset.height);
-
-		Texture2D texture = new Texture2D(asset.width, asset.height, TextureFormat.ARGB32, false);
-
-		anim.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
-
-		anim.sprite.texture.SetPixels(colors);
-
+		anim.sprite = Sprite.Create(loaderTexture.texture, new Rect(asset.x, asset.y, asset.width, asset.height), Vector2.zero);
 	}
 
 	void CopyPasteFoldersAndPNG(string SourcePath, string DestinationPath) {
