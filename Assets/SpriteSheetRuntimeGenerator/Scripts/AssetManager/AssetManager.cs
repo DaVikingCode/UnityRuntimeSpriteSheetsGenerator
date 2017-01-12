@@ -40,7 +40,6 @@ public class AssetManager : MonoBehaviour {
 
 		List<Texture2D> textures = new List<Texture2D>();
 		List<string> images = new List<string>();
-		List<TextureAsset> textureAssets = new List<TextureAsset>();
 
 		foreach (ItemToRaster itemToRaster in itemsToRaster) {
 
@@ -66,56 +65,76 @@ public class AssetManager : MonoBehaviour {
 		for (int i = 0; i < mFillColor.Length; ++i)
 			mFillColor[i] = Color.clear;
 
-		mPacker = new RectanglePacker(mTexture.width, mTexture.height, padding);
-		for (int i = 0; i < textures.Count; i++)
-			mPacker.insertRectangle((int) mRectangles[i].width, (int) mRectangles[i].height, i);
+		int numSpriteSheet = 0;
+		while (mRectangles.Count > 0) {
 
-		mPacker.packRectangles();
+			mPacker = new RectanglePacker(mTexture.width, mTexture.height, padding);
+			for (int i = 0; i < mRectangles.Count; i++)
+				mPacker.insertRectangle((int) mRectangles[i].width, (int) mRectangles[i].height, i);
 
-		if (mPacker.rectangleCount > 0) {
+			mPacker.packRectangles();
 
-			mTexture.SetPixels32(mFillColor);
-			IntegerRectangle rect = new IntegerRectangle();
-			textureAssets = new List<TextureAsset>();
+			if (mPacker.rectangleCount > 0) {
 
-			for (int j = 0; j < mPacker.rectangleCount; j++) {
+				mTexture.SetPixels32(mFillColor);
+				IntegerRectangle rect = new IntegerRectangle();
+				List<TextureAsset> textureAssets = new List<TextureAsset>();
 
-				rect = mPacker.getRectangle(j, rect);
+				List<Rect> rectGarbages = new List<Rect>();
 
-				int index = mPacker.getRectangleId(j);
+				for (int j = 0; j < mPacker.rectangleCount; j++) {
 
-				mTexture.SetPixels32(rect.x, rect.y, rect.width, rect.height, textures[index].GetPixels32());
+					rect = mPacker.getRectangle(j, rect);
 
-				TextureAsset texture = new TextureAsset();
-				texture.x = rect.x;
-				texture.y = rect.y;
-				texture.width = rect.width;
-				texture.height = rect.height;
-				texture.name = images[index];
+					int index = mPacker.getRectangleId(j);
 
-				textureAssets.Add(texture);
+					mTexture.SetPixels32(rect.x, rect.y, rect.width, rect.height, textures[index].GetPixels32());
+
+					TextureAsset texture = new TextureAsset();
+					texture.x = rect.x;
+					texture.y = rect.y;
+					texture.width = rect.width;
+					texture.height = rect.height;
+					texture.name = images[index];
+
+					textureAssets.Add(texture);
+
+					rectGarbages.Add(mRectangles[index]);
+				}
+
+				foreach (Rect rectGarbage in rectGarbages) {
+
+					int indexToDestroy = mRectangles.IndexOf(rectGarbage);
+
+					mRectangles.RemoveAt(indexToDestroy);
+					textures.RemoveAt(indexToDestroy);
+					images.RemoveAt(indexToDestroy);
+				}
+
+				mTexture.Apply();
+
+				Directory.CreateDirectory(Application.persistentDataPath + "/Test/");
+
+				File.WriteAllBytes(Application.persistentDataPath + "/Test/data" + numSpriteSheet + ".png", mTexture.EncodeToPNG());
+				File.WriteAllText(Application.persistentDataPath + "/Test/data" + numSpriteSheet + ".json", JsonUtility.ToJson(new TextureAssets(textureAssets.ToArray())));
+				++numSpriteSheet;
+
+				/*WWW loaderTexture = new WWW("file:///" + Application.persistentDataPath + "/Test/data.png");
+				yield return loaderTexture;
+
+				WWW loaderJSON = new WWW("file:///" + Application.persistentDataPath + "/Test/data.json");
+				yield return loaderJSON;
+
+				TextureAssets textureAssets = JsonUtility.FromJson<TextureAssets>(loaderJSON.text);*/
+
+				foreach (TextureAsset textureAsset in textureAssets)
+					mSprites.Add(textureAsset.name, Sprite.Create(mTexture, new Rect(textureAsset.x, textureAsset.y, textureAsset.width, textureAsset.height), Vector2.zero));
+
 			}
 
-			mTexture.Apply();
-
-			Directory.CreateDirectory(Application.persistentDataPath + "/Test/");
-
-			File.WriteAllBytes(Application.persistentDataPath + "/Test/data.png", mTexture.EncodeToPNG());
-			File.WriteAllText(Application.persistentDataPath + "/Test/data.json", JsonUtility.ToJson(new TextureAssets(textureAssets.ToArray())));
-
-			/*WWW loaderTexture = new WWW("file:///" + Application.persistentDataPath + "/Test/data.png");
-			yield return loaderTexture;
-
-			WWW loaderJSON = new WWW("file:///" + Application.persistentDataPath + "/Test/data.json");
-			yield return loaderJSON;
-
-			TextureAssets textureAssets = JsonUtility.FromJson<TextureAssets>(loaderJSON.text);*/
-
-			foreach (TextureAsset textureAsset in textureAssets)
-				mSprites.Add(textureAsset.name, Sprite.Create(mTexture, new Rect(textureAsset.x, textureAsset.y, textureAsset.width, textureAsset.height), Vector2.zero));
-
-			OnProcessCompleted.Invoke();
 		}
+
+		OnProcessCompleted.Invoke();
 	}
 
 	public Sprite GetSprite(string id) {
