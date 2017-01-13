@@ -140,6 +140,19 @@ namespace DaVikingCode.AssetPacker {
 			OnProcessCompleted.Invoke();
 		}
 
+		public void Dispose() {
+
+			foreach (var asset in mSprites)
+				Destroy(asset.Value.texture);
+
+			mSprites.Clear();
+		}
+
+		void Destroy() {
+
+			Dispose();
+		}
+
 		public Sprite GetSprite(string id) {
 
 			Sprite sprite = null;
