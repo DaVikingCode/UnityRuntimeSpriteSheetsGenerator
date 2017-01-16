@@ -13,35 +13,55 @@ namespace DaVikingCode.AssetPacker {
 		public UnityEvent OnProcessCompleted;
 		public float pixelsPerUnit = 100.0f;
 
+		public bool useCache = false;
+		public string cacheName = "";
+		public int cacheVersion = 1;
+
 		protected Dictionary<string, Sprite> mSprites = new Dictionary<string, Sprite>();
-		protected List<ItemToRaster> itemsToRaster = new List<ItemToRaster>();
+		protected List<TextureToPack> itemsToRaster = new List<TextureToPack>();
 
 		protected bool allow4096Textures = false;
 
-		public void AddItemToRaster(string file, string customID = null) {
+		public void AddTextureToPack(string file, string customID = null) {
 
-			itemsToRaster.Add(new ItemToRaster(file, customID != null ? customID : Path.GetFileNameWithoutExtension(file)));
+			itemsToRaster.Add(new TextureToPack(file, customID != null ? customID : Path.GetFileNameWithoutExtension(file)));
 		}
 
-		public void AddItemsToRaster(string[] files) {
+		public void AddTexturesToPack(string[] files) {
 
 			foreach (string file in files)
-				AddItemToRaster(file);
+				AddTextureToPack(file);
 		}
 
 		public void Process(bool allow4096Textures = false) {
 
 			this.allow4096Textures = allow4096Textures;
 
-			StartCoroutine(process());
+			if (useCache) {
+
+				if (cacheName == "")
+					throw new Exception("No cache name specified");
+
+				string path = Application.persistentDataPath + "/AssetPacker/" + cacheName + "/" + cacheVersion + "/";
+
+				bool cacheExist = Directory.Exists(path);
+
+				if (!cacheExist)
+					StartCoroutine(createPack(path));
+				else
+					StartCoroutine(loadPack(path));
+				
+			} else
+				StartCoroutine(createPack());
+			
 		}
 
-		protected IEnumerator process() {
+		protected IEnumerator createPack(string savePath = "") {
 
 			List<Texture2D> textures = new List<Texture2D>();
 			List<string> images = new List<string>();
 
-			foreach (ItemToRaster itemToRaster in itemsToRaster) {
+			foreach (TextureToPack itemToRaster in itemsToRaster) {
 
 				WWW loader = new WWW("file:///" + itemToRaster.file);
 
@@ -117,24 +137,40 @@ namespace DaVikingCode.AssetPacker {
 
 					mTexture.Apply();
 
-					Directory.CreateDirectory(Application.persistentDataPath + "/Test/");
+					if (savePath != "") {
 
-					File.WriteAllBytes(Application.persistentDataPath + "/Test/data" + numSpriteSheet + ".png", mTexture.EncodeToPNG());
-					File.WriteAllText(Application.persistentDataPath + "/Test/data" + numSpriteSheet + ".json", JsonUtility.ToJson(new TextureAssets(textureAssets.ToArray())));
-					++numSpriteSheet;
+						Directory.CreateDirectory(savePath);
 
-					/*WWW loaderTexture = new WWW("file:///" + Application.persistentDataPath + "/Test/data.png");
-					yield return loaderTexture;
-
-					WWW loaderJSON = new WWW("file:///" + Application.persistentDataPath + "/Test/data.json");
-					yield return loaderJSON;
-
-					TextureAssets textureAssets = JsonUtility.FromJson<TextureAssets>(loaderJSON.text);*/
+						File.WriteAllBytes(savePath + "/data" + numSpriteSheet + ".png", mTexture.EncodeToPNG());
+						File.WriteAllText(savePath + "/data" + numSpriteSheet + ".json", JsonUtility.ToJson(new TextureAssets(textureAssets.ToArray())));
+						++numSpriteSheet;
+					}
 
 					foreach (TextureAsset textureAsset in textureAssets)
 						mSprites.Add(textureAsset.name, Sprite.Create(mTexture, new Rect(textureAsset.x, textureAsset.y, textureAsset.width, textureAsset.height), Vector2.zero, pixelsPerUnit, 0, SpriteMeshType.FullRect));
 				}
 
+			}
+
+			OnProcessCompleted.Invoke();
+		}
+
+		protected IEnumerator loadPack(string savePath) {
+			
+			int numFiles = Directory.GetFiles(savePath).Length;
+
+			for (int i = 0; i < numFiles / 2; ++i) {
+
+				WWW loaderTexture = new WWW("file:///" + savePath + "/data" + i + ".png");
+				yield return loaderTexture;
+
+				WWW loaderJSON = new WWW("file:///" + savePath + "/data" + i + ".json");
+				yield return loaderJSON;
+
+				TextureAssets textureAssets = JsonUtility.FromJson<TextureAssets> (loaderJSON.text);
+
+				foreach (TextureAsset textureAsset in textureAssets.assets)
+					mSprites.Add(textureAsset.name, Sprite.Create(loaderTexture.texture, new Rect(textureAsset.x, textureAsset.y, textureAsset.width, textureAsset.height), Vector2.zero, pixelsPerUnit, 0, SpriteMeshType.FullRect));
 			}
 
 			OnProcessCompleted.Invoke();

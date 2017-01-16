@@ -430,7 +430,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   anim: {fileID: 506600173}
-  anims: {fileID: 0}
 --- !u!4 &2090206894
 Transform:
   m_ObjectHideFlags: 0
@@ -458,7 +457,9 @@ MonoBehaviour:
   OnProcessCompleted:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: 556e697479456e67696e652e4576656e74732e556e6974794576656e742c20556e697479456e67696e652c2056657273696f6e3d302e302e302e302c2043756c747572653d6e65757472616c2c205075626c69634b6579546f6b656e3d6e756c6c
-    m_CallsDirty: 1
-  mTexture: {fileID: 0}
-  allow4096Textures: 0
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  pixelsPerUnit: 100
+  useCache: 1
+  cacheName: Character
+  cacheVersion: 1

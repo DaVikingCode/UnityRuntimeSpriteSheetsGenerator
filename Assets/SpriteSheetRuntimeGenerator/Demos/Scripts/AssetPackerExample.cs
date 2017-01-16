@@ -21,7 +21,7 @@ public class AssetPackerExample : MonoBehaviour {
 
 		assetPacker.OnProcessCompleted.AddListener(LaunchAnimations);
 
-		assetPacker.AddItemsToRaster(files);
+		assetPacker.AddTexturesToPack(files);
 		assetPacker.Process();
 	}
 
