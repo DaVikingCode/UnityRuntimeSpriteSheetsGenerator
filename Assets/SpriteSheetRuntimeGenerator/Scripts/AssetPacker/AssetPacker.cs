@@ -16,6 +16,7 @@ namespace DaVikingCode.AssetPacker {
 		public bool useCache = false;
 		public string cacheName = "";
 		public int cacheVersion = 1;
+		public bool deletePreviousCacheVersion = true;
 
 		protected Dictionary<string, Sprite> mSprites = new Dictionary<string, Sprite>();
 		protected List<TextureToPack> itemsToRaster = new List<TextureToPack>();
@@ -139,6 +140,9 @@ namespace DaVikingCode.AssetPacker {
 
 					if (savePath != "") {
 
+						if (deletePreviousCacheVersion && Directory.Exists(Application.persistentDataPath + "/AssetPacker/" + cacheName + "/"))
+							Directory.Delete(Application.persistentDataPath + "/AssetPacker/" + cacheName + "/", true);
+
 						Directory.CreateDirectory(savePath);
 
 						File.WriteAllBytes(savePath + "/data" + numSpriteSheet + ".png", mTexture.EncodeToPNG());
@@ -172,6 +176,8 @@ namespace DaVikingCode.AssetPacker {
 				foreach (TextureAsset textureAsset in textureAssets.assets)
 					mSprites.Add(textureAsset.name, Sprite.Create(loaderTexture.texture, new Rect(textureAsset.x, textureAsset.y, textureAsset.width, textureAsset.height), Vector2.zero, pixelsPerUnit, 0, SpriteMeshType.FullRect));
 			}
+
+			yield return null;
 
 			OnProcessCompleted.Invoke();
 		}
