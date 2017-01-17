@@ -13,7 +13,8 @@ public class AssetPackerExample : MonoBehaviour {
 	
 	void Start () {
 
-		CopyPasteFoldersAndPNG(Application.dataPath + "/SpriteSheetRuntimeGenerator/Demos/StreamingAssets", Application.persistentDataPath);
+		// We just copy and paste files, so you don't have to do it manually.
+		CopyPasteFoldersAndPNG(Application.dataPath + "/SpriteSheetRuntimeGenerator/Demos/Sprites", Application.persistentDataPath);
 
 		string[] files = Directory.GetFiles(Application.persistentDataPath + "/Textures", "*.png");
 

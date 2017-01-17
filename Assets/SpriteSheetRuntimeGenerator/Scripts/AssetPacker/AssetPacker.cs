@@ -72,32 +72,32 @@ namespace DaVikingCode.AssetPacker {
 				images.Add(itemToRaster.id);
 			}
 
-			List<Rect> mRectangles = new List<Rect>();
+			List<Rect> rectangles = new List<Rect>();
 			for (int i = 0; i < textures.Count; i++)
-				mRectangles.Add(new Rect(0, 0, textures[i].width, textures[i].height));
+				rectangles.Add(new Rect(0, 0, textures[i].width, textures[i].height));
 
 			const int padding = 1;
 
 			int textureSize = allow4096Textures ? 4096 : 2048;
 
 			int numSpriteSheet = 0;
-			while (mRectangles.Count > 0) {
+			while (rectangles.Count > 0) {
 
-				Texture2D mTexture = new Texture2D(textureSize, textureSize, TextureFormat.ARGB32, false);
-				Color32[] mFillColor = mTexture.GetPixels32();
-				for (int i = 0; i < mFillColor.Length; ++i)
-					mFillColor[i] = Color.clear;
+				Texture2D texture = new Texture2D(textureSize, textureSize, TextureFormat.ARGB32, false);
+				Color32[] fillColor = texture.GetPixels32();
+				for (int i = 0; i < fillColor.Length; ++i)
+					fillColor[i] = Color.clear;
 
-				RectanglePacker mPacker = new RectanglePacker(mTexture.width, mTexture.height, padding);
+				RectanglePacker packer = new RectanglePacker(texture.width, texture.height, padding);
 
-				for (int i = 0; i < mRectangles.Count; i++)
-					mPacker.insertRectangle((int) mRectangles[i].width, (int) mRectangles[i].height, i);
+				for (int i = 0; i < rectangles.Count; i++)
+					packer.insertRectangle((int) rectangles[i].width, (int) rectangles[i].height, i);
 
-				mPacker.packRectangles();
+				packer.packRectangles();
 
-				if (mPacker.rectangleCount > 0) {
+				if (packer.rectangleCount > 0) {
 
-					mTexture.SetPixels32(mFillColor);
+					texture.SetPixels32(fillColor);
 					IntegerRectangle rect = new IntegerRectangle();
 					List<TextureAsset> textureAssets = new List<TextureAsset>();
 
@@ -105,30 +105,30 @@ namespace DaVikingCode.AssetPacker {
 					List<Texture2D> garabeTextures = new List<Texture2D>();
 					List<string> garbageImages = new List<string>();
 
-					for (int j = 0; j < mPacker.rectangleCount; j++) {
+					for (int j = 0; j < packer.rectangleCount; j++) {
 
-						rect = mPacker.getRectangle(j, rect);
+						rect = packer.getRectangle(j, rect);
 
-						int index = mPacker.getRectangleId(j);
+						int index = packer.getRectangleId(j);
 
-						mTexture.SetPixels32(rect.x, rect.y, rect.width, rect.height, textures[index].GetPixels32());
+						texture.SetPixels32(rect.x, rect.y, rect.width, rect.height, textures[index].GetPixels32());
 
-						TextureAsset texture = new TextureAsset();
-						texture.x = rect.x;
-						texture.y = rect.y;
-						texture.width = rect.width;
-						texture.height = rect.height;
-						texture.name = images[index];
+						TextureAsset textureAsset = new TextureAsset();
+						textureAsset.x = rect.x;
+						textureAsset.y = rect.y;
+						textureAsset.width = rect.width;
+						textureAsset.height = rect.height;
+						textureAsset.name = images[index];
 
-						textureAssets.Add(texture);
+						textureAssets.Add(textureAsset);
 
-						garbageRect.Add(mRectangles[index]);
+						garbageRect.Add(rectangles[index]);
 						garabeTextures.Add(textures[index]);
 						garbageImages.Add(images[index]);
 					}
 
 					foreach (Rect garbage in garbageRect)
-						mRectangles.Remove(garbage);
+						rectangles.Remove(garbage);
 
 					foreach (Texture2D garbage in garabeTextures)
 						textures.Remove(garbage);
@@ -136,7 +136,7 @@ namespace DaVikingCode.AssetPacker {
 					foreach (string garbage in garbageImages)
 						images.Remove(garbage);
 
-					mTexture.Apply();
+					texture.Apply();
 
 					if (savePath != "") {
 
@@ -145,13 +145,13 @@ namespace DaVikingCode.AssetPacker {
 
 						Directory.CreateDirectory(savePath);
 
-						File.WriteAllBytes(savePath + "/data" + numSpriteSheet + ".png", mTexture.EncodeToPNG());
+						File.WriteAllBytes(savePath + "/data" + numSpriteSheet + ".png", texture.EncodeToPNG());
 						File.WriteAllText(savePath + "/data" + numSpriteSheet + ".json", JsonUtility.ToJson(new TextureAssets(textureAssets.ToArray())));
 						++numSpriteSheet;
 					}
 
 					foreach (TextureAsset textureAsset in textureAssets)
-						mSprites.Add(textureAsset.name, Sprite.Create(mTexture, new Rect(textureAsset.x, textureAsset.y, textureAsset.width, textureAsset.height), Vector2.zero, pixelsPerUnit, 0, SpriteMeshType.FullRect));
+						mSprites.Add(textureAsset.name, Sprite.Create(texture, new Rect(textureAsset.x, textureAsset.y, textureAsset.width, textureAsset.height), Vector2.zero, pixelsPerUnit, 0, SpriteMeshType.FullRect));
 				}
 
 			}
