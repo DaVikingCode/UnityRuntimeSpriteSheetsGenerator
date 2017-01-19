@@ -59,6 +59,14 @@ namespace DaVikingCode.AssetPacker {
 
 		protected IEnumerator createPack(string savePath = "") {
 
+			if (savePath != "") {
+
+				if (deletePreviousCacheVersion && Directory.Exists(Application.persistentDataPath + "/AssetPacker/" + cacheName + "/"))
+					Directory.Delete(Application.persistentDataPath + "/AssetPacker/" + cacheName + "/", true);
+
+				Directory.CreateDirectory(savePath);
+			}
+
 			List<Texture2D> textures = new List<Texture2D>();
 			List<string> images = new List<string>();
 
@@ -139,11 +147,6 @@ namespace DaVikingCode.AssetPacker {
 					texture.Apply();
 
 					if (savePath != "") {
-
-						if (deletePreviousCacheVersion && Directory.Exists(Application.persistentDataPath + "/AssetPacker/" + cacheName + "/"))
-							Directory.Delete(Application.persistentDataPath + "/AssetPacker/" + cacheName + "/", true);
-
-						Directory.CreateDirectory(savePath);
 
 						File.WriteAllBytes(savePath + "/data" + numSpriteSheet + ".png", texture.EncodeToPNG());
 						File.WriteAllText(savePath + "/data" + numSpriteSheet + ".json", JsonUtility.ToJson(new TextureAssets(textureAssets.ToArray())));
