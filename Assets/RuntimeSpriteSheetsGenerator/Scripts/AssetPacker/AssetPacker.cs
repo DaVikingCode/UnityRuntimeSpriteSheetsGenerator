@@ -62,7 +62,8 @@ namespace DaVikingCode.AssetPacker {
 			if (savePath != "") {
 
 				if (deletePreviousCacheVersion && Directory.Exists(Application.persistentDataPath + "/AssetPacker/" + cacheName + "/"))
-					Directory.Delete(Application.persistentDataPath + "/AssetPacker/" + cacheName + "/", true);
+					foreach (string dirPath in Directory.GetDirectories(Application.persistentDataPath + "/AssetPacker/" + cacheName + "/", "*", SearchOption.AllDirectories))
+						Directory.Delete(dirPath, true);
 
 				Directory.CreateDirectory(savePath);
 			}
