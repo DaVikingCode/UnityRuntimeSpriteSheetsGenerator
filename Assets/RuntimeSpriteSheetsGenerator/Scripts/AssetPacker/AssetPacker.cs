@@ -212,7 +212,8 @@ namespace DaVikingCode.AssetPacker {
 
 			List<string> spriteNames = new List<string>();
 			foreach (var asset in mSprites)
-				spriteNames.Add(asset.Key);
+				if (asset.Key.StartsWith(prefix))
+					spriteNames.Add(asset.Key);
 
 			spriteNames.Sort(StringComparer.Ordinal);
 
