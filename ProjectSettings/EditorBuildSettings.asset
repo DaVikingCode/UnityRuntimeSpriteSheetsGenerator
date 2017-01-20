@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/SpriteSheetRuntimeGenerator/Demos/Scenes/RectanglePacking.unity
+    path: Assets/RuntimeSpriteSheetsGenerator/Demos/Scenes/RectanglePacking.unity
   - enabled: 1
-    path: Assets/SpriteSheetRuntimeGenerator/Demos/Scenes/AssetPacker.unity
+    path: Assets/RuntimeSpriteSheetsGenerator/Demos/Scenes/AssetPacker.unity
