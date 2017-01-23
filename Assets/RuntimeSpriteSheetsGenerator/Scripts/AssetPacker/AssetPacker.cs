@@ -81,13 +81,16 @@ namespace DaVikingCode.AssetPacker {
 				images.Add(itemToRaster.id);
 			}
 
+			int textureSize = allow4096Textures ? 4096 : 2048;
+
 			List<Rect> rectangles = new List<Rect>();
 			for (int i = 0; i < textures.Count; i++)
-				rectangles.Add(new Rect(0, 0, textures[i].width, textures[i].height));
+				if (textures[i].width > textureSize || textures[i].height > textureSize)
+					throw new Exception("A texture size is bigger than the sprite sheet size!");
+				else
+					rectangles.Add(new Rect(0, 0, textures[i].width, textures[i].height));
 
 			const int padding = 1;
-
-			int textureSize = allow4096Textures ? 4096 : 2048;
 
 			int numSpriteSheet = 0;
 			while (rectangles.Count > 0) {
