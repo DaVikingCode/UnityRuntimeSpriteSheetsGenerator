@@ -29,3 +29,8 @@ sysinfo.txt
 *.apk
 Assets/ConsolePro
 ConsolePro.meta
+Assets/link.*
+Assets/Opencoding
+Opencoding.meta
+Assets/Plugins
+Plugins.meta

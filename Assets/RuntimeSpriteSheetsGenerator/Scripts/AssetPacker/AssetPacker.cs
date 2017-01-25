@@ -180,8 +180,9 @@ namespace DaVikingCode.AssetPacker {
 
 				TextureAssets textureAssets = JsonUtility.FromJson<TextureAssets> (loaderJSON.text);
 
+				Texture2D t = loaderTexture.texture; // prevent creating a new Texture2D eacg time.
 				foreach (TextureAsset textureAsset in textureAssets.assets)
-					mSprites.Add(textureAsset.name, Sprite.Create(loaderTexture.texture, new Rect(textureAsset.x, textureAsset.y, textureAsset.width, textureAsset.height), Vector2.zero, pixelsPerUnit, 0, SpriteMeshType.FullRect));
+					mSprites.Add(textureAsset.name, Sprite.Create(t, new Rect(textureAsset.x, textureAsset.y, textureAsset.width, textureAsset.height), Vector2.zero, pixelsPerUnit, 0, SpriteMeshType.FullRect));
 			}
 
 			yield return null;
