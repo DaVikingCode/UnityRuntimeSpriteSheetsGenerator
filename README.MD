@@ -5,6 +5,8 @@ Unity and plugins provide many great ways to build Sprite Sheets. However they'r
 
 The RectanglePacking algorithm is a port of the AS3 version made by [Ville Koskela](https://github.com/villekoskelaorg/RectanglePacking). Assets used in the demo come from [Kenney](http://kenney.nl/).
 
+You could combine the generated Sprite Sheets.png with a pngquant compression via this script [PngQuantNativeProcess](https://github.com/DaVikingCode/PngQuantNativeProcess).
+
 Example:
 --------
 Add the `AssetPacker` component to your GameObject:  
