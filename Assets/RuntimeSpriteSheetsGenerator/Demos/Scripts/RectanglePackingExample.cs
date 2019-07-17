@@ -145,12 +145,12 @@ public class RectanglePackingExample : MonoBehaviour {
 
 	private Color32 convertHexToRGBA(uint color) {
 
-		Color32 c;
-		c.b = (byte)((color) & 0xFF);
-		c.g = (byte)((color>>8) & 0xFF);
-		c.r = (byte)((color>>16) & 0xFF);
-		c.a = (byte)((color>>24) & 0xFF);
-		return c;
+        return new Color32(
+            (byte)((color >> 16) & 0xFF),
+            (byte)((color >> 8) & 0xFF),
+            (byte)((color) & 0xFF),
+            (byte)((color >> 24) & 0xFF)
+            );
 	}
 
 }
