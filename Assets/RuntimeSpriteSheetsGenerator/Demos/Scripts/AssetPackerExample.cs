@@ -35,15 +35,15 @@ public class AssetPackerExample : MonoBehaviour {
 
 		Sprite[] sprites = assetPacker.GetSprites("walking");
 
-		int j = 0;
-		while (j < sprites.Length) {
+		int i = 0;
+		while (i < sprites.Length) {
 
-			anim.sprite = sprites[j++];
+			anim.sprite = sprites[i++];
 
 			yield return new WaitForSeconds(0.1f);
 
-			if (j == sprites.Length)
-				j = 0;
+			if (i == sprites.Length)
+				i = 0;
 		}
 	}
 
