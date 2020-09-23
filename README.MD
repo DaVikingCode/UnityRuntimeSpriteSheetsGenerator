@@ -7,6 +7,8 @@ The RectanglePacking algorithm is a port of the AS3 version made by [Ville Koske
 
 You could combine the generated Sprite Sheets.png with a [pngquant](https://pngquant.org/) compression via this script [PngQuantNativeProcess](https://github.com/DaVikingCode/PngQuantNativeProcess).
 
+Please note that Unity provides a [Texture2D.PackTextures method](https://docs.unity3d.com/ScriptReference/Texture2D.PackTextures.html), I didn't test it nor made benchmark performances.
+
 Example:
 --------
 Add the `AssetPacker` component to your GameObject:  
